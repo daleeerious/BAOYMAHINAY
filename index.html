@@ -76,40 +76,45 @@
                 '10': 10, 'Jack': 11, 'Queen': 12, 'King': 13, 'Ace': 14
             };
 
-            var player1Cards = [];
-            var player2Cards = [];
+            function getRandomCard() {
+                var randomSuit = suitsArray[Math.floor(Math.random() * suitsArray.length)];
+                var randomValue = Object.keys(valuesObject)[Math.floor(Math.random() * Object.keys(valuesObject).length)];
+                return {
+                    suit: randomSuit,
+                    value: randomValue
+                };
+            }
 
-            var player1Total = 0;
-            var player2Total = 0;
+            var player1Cards = [getRandomCard(), getRandomCard(), getRandomCard()];
+            var player2Cards = [getRandomCard(), getRandomCard(), getRandomCard()];
+
+            function calculateTotalValue(cards) {
+                var total = 0;
+                cards.forEach(function (card) {
+                    total += valuesObject[card.value];
+                });
+                return total % 100;
+            }
+
+            var player1Total = calculateTotalValue(player1Cards);
+            var player2Total = calculateTotalValue(player2Cards);
 
             var result = document.getElementById('result');
             result.innerHTML = '';
 
-            for (var i = 0; i < 3; i++) {
-                var randomSuit1 = suitsArray[Math.floor(Math.random() * suitsArray.length)];
-                var randomValue1 = Object.keys(valuesObject)[Math.floor(Math.random() * Object.keys(valuesObject).length)];
-                var randomSuit2 = suitsArray[Math.floor(Math.random() * suitsArray.length)];
-                var randomValue2 = Object.keys(valuesObject)[Math.floor(Math.random() * Object.keys(valuesObject).length)];
-
-                player1Cards.push({ suit: randomSuit1, value: randomValue1 });
-                player2Cards.push({ suit: randomSuit2, value: randomValue2 });
-
-                player1Total += valuesObject[randomValue1];
-                player2Total += valuesObject[randomValue2];
-
-                var cardElement1 = document.createElement('p');
-                cardElement1.textContent = randomValue1 + ' of ' + randomSuit1;
-                cardElement1.className = 'card';
-                result.appendChild(cardElement1);
-
-                var cardElement2 = document.createElement('p');
-                cardElement2.textContent = randomValue2 + ' of ' + randomSuit2;
-                cardElement2.className = 'card';
-                result.appendChild(cardElement2);
+            function displayPlayerCards(playerCards, playerTotal) {
+                playerCards.forEach(function (card) {
+                    var cardText = card.value + ' of ' + card.suit;
+                    var cardElement = document.createElement('p');
+                    cardElement.textContent = cardText;
+                    cardElement.className = 'card';
+                    result.appendChild(cardElement);
+                });
+                result.innerHTML += 'Player Total: ' + playerTotal + '<br><br>';
             }
 
-            result.innerHTML += 'Player 1 Total: ' + (player1Total % 100) + '<br><br>';
-            result.innerHTML += 'Player 2 Total: ' + (player2Total % 100) + '<br><br>';
+            displayPlayerCards(player1Cards, player1Total);
+            displayPlayerCards(player2Cards, player2Total);
 
             if (player1Total > player2Total) {
                 result.innerHTML += 'Player 1 wins!';
